@@ -8,19 +8,28 @@ from keras import layers
 from utils import make_generator_model, make_discriminator_model
 
 checkpoint_dir = './training_checkpoints'
-os.mkdir(checkpoint_dir)
+if not os.path.exists(checkpoint_dir):
+    os.mkdir(checkpoint_dir)
 
-(train_images, train_labels), (_, _) = tf.keras.datasets.mnist.load_data()
 
-train_images = train_images.reshape(train_images.shape[0], 28, 28, 1).astype('float32')
-train_images = (train_images - 127.5) / 127.5  # Normalize the images to [-1, 1]
+
+
+
+IMAGE_SIZE = 56
+EPOCHS = 10
+noise_dim = 100
 
 BUFFER_SIZE = 60000
 BATCH_SIZE = 256
 
-EPOCHS = 50
-noise_dim = 100
-num_examples_to_generate = 16
+(train_images, train_labels), (_, _) = tf.keras.datasets.mnist.load_data()
+
+print(train_images.shape[0])
+train_images = train_images.reshape( -1, IMAGE_SIZE, IMAGE_SIZE, 1).astype('float32')
+train_images = (train_images - 127.5) / 127.5  # Normalize the images to [-1, 1]
+
+
+
 
 train_dataset = tf.data.Dataset.from_tensor_slices(train_images).shuffle(BUFFER_SIZE).batch(BATCH_SIZE)
 
@@ -74,8 +83,8 @@ def train(dataset, epochs):
 
 print("START")
 
-generator = make_generator_model()
-discriminator = make_discriminator_model()
+generator = make_generator_model(IMAGE_SIZE)
+discriminator = make_discriminator_model(IMAGE_SIZE)
 
 cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=True)
 
@@ -88,8 +97,6 @@ checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
                                 discriminator_optimizer=discriminator_optimizer,
                                 generator=generator,
                                 discriminator=discriminator)
-
-seed = tf.random.normal([num_examples_to_generate, noise_dim])
 
 
 train(train_dataset, EPOCHS)
