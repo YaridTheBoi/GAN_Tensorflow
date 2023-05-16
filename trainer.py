@@ -16,7 +16,7 @@ if not os.path.exists(checkpoint_dir):
 
 
 IMAGE_SIZE = 56
-EPOCHS = 10
+EPOCHS = 65
 noise_dim = 100
 
 BUFFER_SIZE = 60000
@@ -75,7 +75,7 @@ def train(dataset, epochs):
 
 
         # Save the model every 15 epochs
-        if (epoch + 1) % 15 == 0:
+        if (epoch + 1) % 10 == 0:
             checkpoint.save(file_prefix = checkpoint_prefix)
 
         print ('Time for epoch {} is {} sec'.format(epoch + 1, time.time()-start))
