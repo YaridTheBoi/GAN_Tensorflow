@@ -4,31 +4,49 @@ import matplotlib.pyplot as plt
 import os
 import time
 from keras import layers
-
+import cv2
+import numpy as np
 from utils import make_generator_model, make_discriminator_model
 
 checkpoint_dir = './training_checkpoints'
 if not os.path.exists(checkpoint_dir):
     os.mkdir(checkpoint_dir)
 
+data_dir = './data'
+if not os.path.exists(data_dir):
+    os.mkdir(data_dir)
+
+if not os.listdir(data_dir):
+    print("Data folder is empty. Provide some photos, then run trianer again")
+    quit()
 
 
+train_images = []
+
+for file in os.scandir(data_dir):
+    image = cv2.imread(file.path)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    #print(image)
+    train_images.append(image)
 
 
-IMAGE_SIZE = 56
-EPOCHS = 65
-noise_dim = 100
+train_images = np.array(train_images)
 
-BUFFER_SIZE = 60000
-BATCH_SIZE = 256
+IMAGE_SIZE = 120
+EPOCHS = 1000
+noise_dim = 200
 
-(train_images, train_labels), (_, _) = tf.keras.datasets.mnist.load_data()
+#BUFFER_SIZE = 60000
+#BATCH_SIZE = 256
 
-print(train_images.shape[0])
+BUFFER_SIZE = 16
+BATCH_SIZE = 2
+
+#(train_images, train_labels), (_, _) = tf.keras.datasets.mnist.load_data()
+
+print(train_images.shape)
 train_images = train_images.reshape( -1, IMAGE_SIZE, IMAGE_SIZE, 1).astype('float32')
 train_images = (train_images - 127.5) / 127.5  # Normalize the images to [-1, 1]
-
-
 
 
 train_dataset = tf.data.Dataset.from_tensor_slices(train_images).shuffle(BUFFER_SIZE).batch(BATCH_SIZE)
@@ -75,15 +93,18 @@ def train(dataset, epochs):
 
 
         # Save the model every 15 epochs
-        if (epoch + 1) % 10 == 0:
+        if (epoch + 1) % 200 == 0 or (epoch + 1) == epochs:
             checkpoint.save(file_prefix = checkpoint_prefix)
+
+
+        
 
         print ('Time for epoch {} is {} sec'.format(epoch + 1, time.time()-start))
 
 
 print("START")
 
-generator = make_generator_model(IMAGE_SIZE)
+generator = make_generator_model(IMAGE_SIZE, noise_dim)
 discriminator = make_discriminator_model(IMAGE_SIZE)
 
 cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=True)

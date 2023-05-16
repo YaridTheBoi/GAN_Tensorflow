@@ -1,9 +1,9 @@
 import tensorflow as tf
 from keras import layers
 
-def make_generator_model(image_size):
+def make_generator_model(image_size, noise_size):
     model = tf.keras.Sequential()
-    model.add(layers.Dense((image_size//4)*(image_size//4)*256, use_bias=False, input_shape=(100,)))
+    model.add(layers.Dense((image_size//4)*(image_size//4)*256, use_bias=False, input_shape=(noise_size,)))
     model.add(layers.BatchNormalization())
     model.add(layers.LeakyReLU())
 

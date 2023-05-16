@@ -4,9 +4,11 @@ from keras import layers
 import os
 from utils import make_discriminator_model, make_generator_model
 
-IMAGE_SIZE = 56
+IMAGE_SIZE = 120
+noise_dim = 200
+
 discriminator = make_discriminator_model(IMAGE_SIZE)
-generator = make_generator_model(IMAGE_SIZE)
+generator = make_generator_model(IMAGE_SIZE, noise_dim)
 
 generator_optimizer = tf.keras.optimizers.Adam(1e-4)
 discriminator_optimizer = tf.keras.optimizers.Adam(1e-4)
@@ -21,7 +23,7 @@ checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
 
 checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
 
-noise = tf.random.normal([1, 100])
+noise = tf.random.normal([1, noise_dim])
 generated_image = generator(noise, training=False)
 
 
