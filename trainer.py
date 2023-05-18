@@ -7,6 +7,7 @@ from keras import layers
 import cv2
 import numpy as np
 from utils import make_generator_model, make_discriminator_model
+from dotenv import load_dotenv
 
 def discriminator_loss(real_output, fake_output):
     real_loss = cross_entropy(tf.ones_like(real_output), real_output)
@@ -82,16 +83,38 @@ if __name__ == '__main__':
 
 
     train_images = np.array(train_images)
+    ans = ''
+    print('\n')
+    if os.path.exists('.env'):
+        load_dotenv()
+        ans = input("""Do you want to use previous settings:
+EPOCHS: {},
+BATCH SIZE: {},
+NOISE DIMENSION: {},
+EPOCH CHECKPOINT: {}  
+y/n: """.format(os.getenv("EPOCHS"), os.getenv("BATCH_SIZE") , os.getenv("NOISE_SIZE"), os.getenv("CHECKPOINT_EPOCH")))
+        
+        if(ans == 'y'):
+            EPOCHS = int(os.getenv("EPOCHS"))
+            BATCH_SIZE = int(os.getenv("BATCH_SIZE"))
+            noise_dim = int(os.getenv("NOISE_SIZE"))
+            CHECKPOINT_EPOCH = int(os.getenv("CHECKPOINT_EPOCH"))
 
-    EPOCHS = int(input("How many epochs you want to train network?: "))
-    BATCH_SIZE = int(input("How big should batch be? You have {} photos: ".format(BUFFER_SIZE)))
-    noise_dim = int(input("What noise size you want to use?: "))
-    CHECKPOINT_EPOCH = int(input("How often do you want to make a checkpoint(in EPOCHS)?: "))
+    if (ans != 'y'):
+        print('\n')
+        EPOCHS = int(input("How many epochs you want to train network?: "))
+        BATCH_SIZE = int(input("How big should batch be? You have {} photos: ".format(BUFFER_SIZE)))
+        noise_dim = int(input("What noise size you want to use?: "))
+        CHECKPOINT_EPOCH = int(input("How often do you want to make a checkpoint(in EPOCHS)?: "))
 
+        with open('.env', 'w') as config:
+            config.write("NOISE_SIZE={}\n".format(noise_dim))
+            config.write("IMAGE_SIZE={}\n".format(IMAGE_SIZE))
+            config.write("EPOCHS={}\n".format(EPOCHS))
+            config.write("CHECKPOINT_EPOCH={}\n".format(CHECKPOINT_EPOCH))
+            config.write("BATCH_SIZE={}\n".format(BATCH_SIZE))
+            config.write("BUFFER_SIZE={}\n".format(BUFFER_SIZE))
     
-
-    #(train_images, train_labels), (_, _) = tf.keras.datasets.mnist.load_data()
-
     print(train_images.shape)
     train_images = train_images.reshape( -1, IMAGE_SIZE, IMAGE_SIZE, 1).astype('float32')
     train_images = (train_images - 127.5) / 127.5 

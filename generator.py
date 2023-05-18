@@ -3,11 +3,16 @@ import tensorflow as tf
 from keras import layers
 import os
 from utils import make_discriminator_model, make_generator_model
+from dotenv import load_dotenv
 
+load_dotenv()
 
 if __name__ == '__main__':
-    IMAGE_SIZE = int(input("What size were training photos?: "))
-    noise_dim = int(input("What size were noise?: "))
+    print(os.getenv("CHECKPOINT_EPOCH"))
+
+
+    IMAGE_SIZE = int(os.getenv("IMAGE_SIZE"))
+    noise_dim = int(os.getenv("NOISE_SIZE"))
 
     discriminator = make_discriminator_model(IMAGE_SIZE)
     generator = make_generator_model(IMAGE_SIZE, noise_dim)
