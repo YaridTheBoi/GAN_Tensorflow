@@ -11,7 +11,11 @@ if __name__ == '__main__':
     print(os.getenv("CHECKPOINT_EPOCH"))
 
 
-    IMAGE_SIZE = int(os.getenv("IMAGE_SIZE"))
+    IMAGE_SIZE = (os.getenv("IMAGE_SIZE"))
+    IMAGE_SIZE = IMAGE_SIZE.strip('][').split(', ')
+    IMAGE_SIZE = [int(x) for x in IMAGE_SIZE]
+    
+    IMAGE_SIZE = [int(x) for x in IMAGE_SIZE]
     noise_dim = int(os.getenv("NOISE_SIZE"))
 
     discriminator = make_discriminator_model(IMAGE_SIZE)

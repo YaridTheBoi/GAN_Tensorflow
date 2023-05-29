@@ -76,7 +76,7 @@ if __name__ == '__main__':
     BUFFER_SIZE = 0
     for file in os.scandir(data_dir):
         image = cv2.imread(file.path)
-        IMAGE_SIZE = image.shape[0]
+        IMAGE_SIZE = [image.shape[0] , image.shape[1]]
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         train_images.append(image)
         BUFFER_SIZE += 1
@@ -116,7 +116,7 @@ y/n: """.format(os.getenv("EPOCHS"), os.getenv("BATCH_SIZE") , os.getenv("NOISE_
             config.write("BUFFER_SIZE={}\n".format(BUFFER_SIZE))
     
     print(train_images.shape)
-    train_images = train_images.reshape( -1, IMAGE_SIZE, IMAGE_SIZE, 1).astype('float32')
+    train_images = train_images.reshape( -1, IMAGE_SIZE[0], IMAGE_SIZE[1], 1).astype('float32')
     train_images = (train_images - 127.5) / 127.5 
 
 
