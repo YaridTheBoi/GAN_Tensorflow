@@ -77,7 +77,7 @@ if __name__ == '__main__':
     for file in os.scandir(data_dir):
         image = cv2.imread(file.path)
         IMAGE_SIZE = [image.shape[0] , image.shape[1]]
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        #image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         train_images.append(image)
         BUFFER_SIZE += 1
 
