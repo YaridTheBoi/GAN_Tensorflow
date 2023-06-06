@@ -4,10 +4,16 @@ from keras import layers
 import os
 from utils import make_discriminator_model, make_generator_model
 from dotenv import load_dotenv
-
+import shutil
 load_dotenv()
 
-if __name__ == '__main__':
+result_dir = './results'
+if os.path.exists(result_dir):
+    shutil.rmtree(result_dir)
+os.mkdir(result_dir)
+
+
+def generate(num):
     print(os.getenv("CHECKPOINT_EPOCH"))
 
 
@@ -35,8 +41,21 @@ if __name__ == '__main__':
     checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
 
     noise = tf.random.normal([1, noise_dim])
-    generated_image = generator(noise, training=False)
+
+    for i in range(num):
+        noise = tf.random.normal([1, noise_dim])
+        generated_image = generator(noise, training=False)
+        plt.imshow(generated_image[0, :, :, 0])
+        plt.axis('off')
+        if(num!=1):
+            plt.savefig(result_dir+'/image{}.png'.format(i), bbox_inches='tight', pad_inches = 0)
+        else:
+            plt.show()
 
 
-    plt.imshow(generated_image[0, :, :, 0], cmap='gray')
-    plt.show()
+
+
+
+if __name__ == '__main__':
+    num = int(input("How many images you want to generate: "))
+    generate(num)

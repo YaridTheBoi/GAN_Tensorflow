@@ -116,8 +116,10 @@ y/n: """.format(os.getenv("EPOCHS"), os.getenv("BATCH_SIZE") , os.getenv("NOISE_
             config.write("BUFFER_SIZE={}\n".format(BUFFER_SIZE))
     
     print(train_images.shape)
-    train_images = train_images.reshape( -1, IMAGE_SIZE[0], IMAGE_SIZE[1], 1).astype('float32')
-    train_images = (train_images - 127.5) / 127.5 
+    train_images = train_images.reshape( -1, IMAGE_SIZE[0], IMAGE_SIZE[1], 3).astype('float32')
+    #train_images = (train_images - 127.5) / 127.5 
+    #train_images = (train_images - train_images.mean(axis=0)) / train_images.std(axis=0)
+    train_images = train_images / 255.0 #best
 
 
     train_dataset = tf.data.Dataset.from_tensor_slices(train_images).shuffle(BUFFER_SIZE).batch(BATCH_SIZE)

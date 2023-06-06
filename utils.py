@@ -21,8 +21,8 @@ def make_generator_model(image_size, noise_size):
     model.add(layers.BatchNormalization())
     model.add(layers.LeakyReLU())
 
-    model.add(layers.Conv2DTranspose(1, (5, 5), strides=(2, 2), padding='same', use_bias=False, activation='tanh'))
-    assert model.output_shape == (None, image_size[0], image_size[1], 1)
+    model.add(layers.Conv2DTranspose(3, (5, 5), strides=(2, 2), padding='same', use_bias=False, activation='tanh'))
+    assert model.output_shape == (None, image_size[0], image_size[1], 3)
 
     return model
 
@@ -31,7 +31,7 @@ def make_discriminator_model(image_size):
     print(image_size[0], image_size[1])
     model = tf.keras.Sequential()
     model.add(layers.Conv2D(64, (5, 5), strides=(2, 2), padding='same',
-                                        input_shape=[image_size[0], image_size[1], 1]))
+                                        input_shape=[image_size[0], image_size[1], 3]))
     model.add(layers.LeakyReLU())
     model.add(layers.Dropout(0.3))
 
